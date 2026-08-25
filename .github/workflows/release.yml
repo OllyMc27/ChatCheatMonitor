@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Validate tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Tag must be a semantic version such as v2.0.0"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Restore
+        run: dotnet restore ChatCheatMonitor.slnx
+
+      - name: Build and test
+        run: |
+          dotnet build ChatCheatMonitor.slnx --configuration Release --no-restore -p:Version=${{ env.VERSION }}
+          dotnet run --project ChatCheatMonitor.Tests/ChatCheatMonitor.Tests.csproj --configuration Release --no-build
+
+      - name: Prepare release assets
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp ChatCheatMonitor/bin/Release/net10.0/ChatCheatMonitor.dll dist/
+          sha256sum dist/ChatCheatMonitor.dll | sed 's#dist/##' > dist/ChatCheatMonitor.dll.sha256
+          awk -v version="$VERSION" '
+            $0 ~ "^## \\[" version "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > dist/release-notes.md
+
+          if [[ ! -s dist/release-notes.md ]]; then
+            echo "Release notes for $VERSION were not found in CHANGELOG.md"
+            exit 1
+          fi
+
+      - name: Publish GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/ChatCheatMonitor.dll dist/ChatCheatMonitor.dll.sha256 --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/ChatCheatMonitor.dll dist/ChatCheatMonitor.dll.sha256 \
+              --title "ChatCheatMonitor $GITHUB_REF_NAME" \
+              --notes-file dist/release-notes.md
+          fi

@@ -1,0 +1,116 @@
+{
+  "Enabled": true,
+  "ResponseMode": "Private",
+  "ReportCommand": "!rep",
+  "PlayerCooldownSeconds": 45,
+  "ServerCooldownSeconds": 20,
+  "IgnoreReportCommands": true,
+  "IgnoreTeamMessages": false,
+  "EnableLeetNormalization": true,
+  "EnableTargetAssistance": true,
+  "MinimumTargetNameLength": 3,
+  "MaxMessageLength": 140,
+  "DefaultLanguage": "en",
+  "Debug": false,
+  "ReminderMessages": {
+    "en": "^1REMINDER:^3 If you believe {target} is {category}, type ^1{reportCommand} {target} <reason>^3 to report it to the admins.",
+    "de": "^1HINWEIS:^3 Wenn du glaubst, dass {target} {category} nutzt, melde es mit ^1{reportCommand} {target} <Grund>^3."
+  },
+  "ExcludedPhrases": [
+  ],
+  "CommunityReportPhrases": [
+    "soft aimbot",
+    "aimbotting",
+    "aim lock",
+    "aimlock",
+    "magnetic aim",
+    "wall hacks",
+    "wallhacks",
+    "wallhacking",
+    "walls",
+    "wh",
+    "hallhack",
+    "hallhacking",
+    "esp",
+    "chams",
+    "red boxes",
+    "redboxes",
+    "tracking through walls",
+    "tracking thru walls",
+    "radar hack",
+    "radar cheat"
+  ],
+  "CommunityReportExclusions": [
+    "anti cheat",
+    "anticheat"
+  ],
+  "Categories": [
+    {
+      "Name": "cheating",
+      "Enabled": true,
+      "MatchMode": "WholeWord",
+      "Phrases": [
+        "cheat",
+        "cheater",
+        "cheating",
+        "aimbot",
+        "aim bot",
+        "soft aim",
+        "wallhack",
+        "wall hack",
+        "walling",
+        "waller",
+        "spinbot",
+        "hacker",
+        "hacking"
+      ],
+      "RegexPatterns": [],
+      "ReminderMessages": {}
+    },
+    {
+      "Name": "exploiting",
+      "Enabled": true,
+      "MatchMode": "WholeWord",
+      "Phrases": [
+        "exploit",
+        "exploiting",
+        "bug abuse"
+      ],
+      "RegexPatterns": [],
+      "ReminderMessages": {}
+    },
+    {
+      "Name": "glitching",
+      "Enabled": true,
+      "MatchMode": "WholeWord",
+      "Phrases": [
+        "glitch",
+        "glitching",
+        "under the map",
+        "out of map"
+      ],
+      "RegexPatterns": [
+        "\\b(?:inside|under)\\s+the\\s+map\\b"
+      ],
+      "ReminderMessages": {}
+    }
+  ],
+  "ServerOverrides": {
+    "127.0.0.1:28960": {
+      "ResponseMode": "Both",
+      "ServerCooldownSeconds": 30,
+      "Language": "en",
+      "ExcludedPhrases": [
+        "example community phrase"
+      ]
+    }
+  },
+  "NotifyStaff": false,
+  "StaffMinimumPermission": "Moderator",
+  "StaffAlertThreshold": 3,
+  "StaffAlertWindowSeconds": 120,
+  "StaffAlertMessage": "^1[CCM]^3 Repeated {category} accusations detected for {target} ({count} in {window}s).",
+  "EnableWebfrontDashboard": true,
+  "WebfrontMinimumPermission": "Moderator",
+  "RecentEventLimit": 50
+}
